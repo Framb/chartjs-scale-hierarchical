@@ -209,7 +209,7 @@ export function spanLogic(node, flat, visibles) {
   const hasFocusBox = leftFirstVisible && rightLastVisible && node.children.length > 1;
   // the next visible after the left one
   const nextVisible = flat.slice(leftVisible.index + 1, rightVisible.index + 1).find((d) => visibles.has(d));
-  const groupLabelCenter = !nextVisible ? leftVisible.center : (leftVisible.center + nextVisible.center) / 2;
+  const groupLabelCenter = !nextVisible ? leftVisible.center : (leftVisible.center + rightVisible.center) / 2;
 
   return {
     hasCollapseBox,

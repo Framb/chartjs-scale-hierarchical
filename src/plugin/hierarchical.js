@@ -184,6 +184,7 @@ const HierarchicalPlugin = {
     const boxSpanColor = scale.options.hierarchySpanColor;
     const boxSpanWidth = scale.options.hierarchySpanWidth;
     const renderLabel = scale.options.hierarchyLabelPosition;
+    const renderButtonExpand = scale.options.hierarchyExpandVisibility;
 
     const scaleLabel = scale.options.scaleLabel;
     const scaleLabelFontColor = helpers.valueOrDefault(scaleLabel.fontColor, defaults.global.defaultFontColor);
@@ -194,6 +195,7 @@ const HierarchicalPlugin = {
     ctx.lineWidth = boxWidth;
     ctx.fillStyle = scaleLabelFontColor; // render in correct color
     ctx.font = scaleLabelFont.font;
+    ctx.textAlign = 'center';
 
     const renderHorLevel = (node) => {
       if (node.children.length === 0) {
@@ -202,7 +204,7 @@ const HierarchicalPlugin = {
       const offset = node.level * boxRow;
 
       if (!node.expand) {
-        if (visibles.has(node)) {
+        if (visibles.has(node) && renderButtonExpand) {
           // expand button
           ctx.strokeRect(node.center - boxSize05, offset + 0, boxSize, boxSize);
           ctx.fillRect(node.center - boxSize05 + 2, offset + boxSize05 - 1, boxSize - 4, 2);
@@ -227,17 +229,18 @@ const HierarchicalPlugin = {
       // render group label
       if (renderLabel === 'below') {
         ctx.fillText(node.label, groupLabelCenter, offset + boxSize);
+
       } else if (renderLabel === 'above') {
         ctx.fillText(node.label, groupLabelCenter, offset - boxSize);
       }
 
-      if (hasCollapseBox) {
+      if (hasCollapseBox && renderButtonExpand) {
         // collapse button
         ctx.strokeRect(leftVisible.center - boxSize05, offset + 0, boxSize, boxSize);
         ctx.fillRect(leftVisible.center - boxSize05 + 2, offset + boxSize05 - 1, boxSize - 4, 2);
       }
 
-      if (hasFocusBox) {
+      if (hasFocusBox && renderButtonExpand) {
         // focus button
         ctx.strokeRect(rightVisible.center - boxSize05, offset + 0, boxSize, boxSize);
         ctx.fillRect(rightVisible.center - 2, offset + boxSize05 - 2, 4, 4);
@@ -248,7 +251,7 @@ const HierarchicalPlugin = {
         ctx.strokeStyle = boxSpanColor;
         ctx.lineWidth = boxSpanWidth;
         ctx.beginPath();
-        if (hasCollapseBox) {
+        if (hasCollapseBox && renderButtonExpand) {
           // stitch to box
           ctx.moveTo(leftVisible.center + boxSize05, offset + boxSize05);
         } else if (leftFirstVisible) {
@@ -260,7 +263,7 @@ const HierarchicalPlugin = {
           ctx.moveTo(leftVisible.center, offset + boxSize05);
         }
 
-        if (hasFocusBox) {
+        if (hasFocusBox && renderButtonExpand) {
           ctx.lineTo(rightVisible.center - boxSize05, offset + boxSize05);
         } else if (rightLastVisible) {
           ctx.lineTo(rightVisible.center, offset + boxSize05);
@@ -507,6 +510,11 @@ const HierarchicalPlugin = {
     const label = chart.data.labels[index];
     const parents = parentsOf(label, flat);
     const boxRow = scale.options.hierarchyBoxLineHeight;
+    const boxVisibility = scale.options.hierarchyExpandVisibility;
+
+    if (!boxVisibility) {
+      return;
+    }
 
     const inRange = hor ? (o) => event.y >= o && event.y <= o + boxRow : (o) => event.x <= o && event.x >= o - boxRow;
 

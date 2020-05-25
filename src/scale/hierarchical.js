@@ -51,7 +51,11 @@ const defaultConfig = Object.assign({}, scaleService.getScaleDefaults('category'
   /**
    * stroke width of the toggle box
    */
-  hierarchyBoxWidth: 1
+  hierarchyBoxWidth: 1,
+  /**
+  * button expand visibility
+  */
+  hierarchyExpandVisibility: true
 });
 
 

@@ -47,6 +47,11 @@ interface IHierarchicalScaleOptions {
    * @default {}
    */
   attributes: {[attribute: string]: any};
+  /**
+   * Hide expand box
+   * @default true
+   */
+  hierarchyExpandVisibility: boolean;
 }
 ```
 
